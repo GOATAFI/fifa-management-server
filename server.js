@@ -31,6 +31,15 @@ app.get('/teams', (req, res) => {
         res.json(result);
     });
 });
+app.get('/managers', (req, res) => {
+    const sql = 'SELECT * FROM managers';
+    db.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result);
+    });
+});
 app.get('/leagues', (req, res) => {
     const sql = 'SELECT * FROM league';
     db.query(sql, (err, result) => {
