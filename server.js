@@ -123,8 +123,43 @@ app.get('/matches', (req, res) => {
         }
     });
 });
+app.get('/users', (req, res) => {
+    const sql = 'SELECT * FROM users';
+    db.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result);
+    });
+});
 
-
+app.post('/users/login', (req, res) => {
+    const { email, password } = req.body;
+    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
+    db.query(sql, [email, password], (err, result) => {
+      if (err) {
+        throw err;
+      }
+  
+      if (result.length > 0) {
+        res.json({ message: 'Login successful' });
+      } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+      }
+    });
+  });
+  
+  app.post('/users', (req, res) => {
+    const { username, email, password } = req.body;
+    const sql = 'INSERT INTO users (Username, Email, Password) VALUES (?, ?, ?)';
+    db.query(sql, [username, email, password], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json({ message: 'Registration successful' });
+    });
+  });
+  
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
