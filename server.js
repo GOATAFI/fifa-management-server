@@ -31,15 +31,7 @@ app.get('/teams', (req, res) => {
         res.json(result);
     });
 });
-app.get('/managers', (req, res) => {
-    const sql = 'SELECT * FROM managers';
-    db.query(sql, (err, result) => {
-        if (err) {
-            throw err;
-        }
-        res.json(result);
-    });
-});
+
 app.get('/leagues', (req, res) => {
     const sql = 'SELECT * FROM league';
     db.query(sql, (err, result) => {
@@ -58,6 +50,7 @@ app.get('/ucl', (req, res) => {
         res.json(result);
     });
 });
+
 app.get('/epl', (req, res) => {
     const sql = 'SELECT * FROM EPL ORDER BY Ranking ASC';
     db.query(sql, (err, result) => {
@@ -67,7 +60,15 @@ app.get('/epl', (req, res) => {
         res.json(result);
     });
 });
-
+app.get('/players',(req,res)=>{
+    const sql = 'SELECT * FROM players ORDER BY Ranking ASC';
+    db.query(sql, (err,result)=>{
+        if(err){
+            throw err;
+        }
+        res.json(result);
+    })
+})
 app.get('/laliga', (req, res) => {
     const sql = 'SELECT * FROM LALIGA ORDER BY Ranking ASC';
     db.query(sql, (err, result) => {
@@ -102,6 +103,16 @@ app.delete('/teams/:id', (req, res) => {
         res.send(`Deleted team with id ${id}`);
     });
 });
+app.get('/teams/:teamName', (req, res) => {
+    const name = req.params.teamName;
+    const sql = `SELECT * FROM \`${name}\``; // Use backticks to escape the table name
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  });
 
 // app.get('/players', (req, res) => {
 //     const sql = 'SELECT * FROM players';
@@ -132,6 +143,24 @@ app.get('/matches', (req, res) => {
         }
     });
 });
+app.get('/managers', (req, res) => {
+    const sql = `SELECT Mid,Name,Age,Nationality, IFNULL(Club,'-') as Club, IFNULL(Contract,'-') as Contract ,Salary FROM Managers`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        }
+        res.json(result);
+    });
+});
+// app.get('/managers', (req, res) => {
+//     const sql = `SELECT * FROM managers`;
+//     db.query(sql, (err, result) => {
+//         if (err) {
+//             throw err;
+//         }
+//         res.json(result);
+//     });
+// });
 app.get('/users', (req, res) => {
     const sql = 'SELECT * FROM users';
     db.query(sql, (err, result) => {
