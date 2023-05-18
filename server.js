@@ -103,6 +103,23 @@ app.delete('/teams/:id', (req, res) => {
         res.send(`Deleted team with id ${id}`);
     });
 });
+app.delete('/matches/:match_id', (req, res) => {
+    const match_id = req.params.match_id;
+    const sql = 'DELETE FROM matches WHERE match_id = ?';
+    db.query(sql, [match_id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to delete the match.' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Match not found.' });
+        }
+
+        return res.sendStatus(200); // Return a success status code
+    });
+});
+
 app.get('/teams/:teamName', (req, res) => {
     const name = req.params.teamName;
     const sql = `SELECT * FROM \`${name}\``; // Use backticks to escape the table name
@@ -113,7 +130,21 @@ app.get('/teams/:teamName', (req, res) => {
       res.json(result);
     });
   });
-
+  app.get('/teams/:teamName/players', (req, res) => {
+    const teamName = req.params.teamName;
+    const searchTerm = req.query.searchTerm;
+  
+    const sql = `SELECT * FROM players WHERE Team = ? AND (PName LIKE ? OR Position LIKE ? OR Age LIKE ? OR Nationality LIKE ? OR Jersey_Num LIKE ? OR Salary LIKE ? OR Contract LIKE ?)`;
+    const values = [teamName, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`];
+  
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  });
+  
 // app.get('/players', (req, res) => {
 //     const sql = 'SELECT * FROM players';
 //     db.query(sql, (err, result) => {
