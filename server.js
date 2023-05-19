@@ -119,6 +119,21 @@ app.delete('/matches/:match_id', (req, res) => {
         return res.sendStatus(200); // Return a success status code
     });
 });
+// app.put('/teams/:id', (req, res) => {
+//     console.log('inside put');
+//     const id = req.params.id;
+//     const { name, league, wins, losses, draws } = req.body;
+//     const sql = 'UPDATE teams SET name = ?, league = ?, wins = ?, losses = ?, draws = ? WHERE id = ?';
+//     const values = [name, league, wins, losses, draws, id];
+    
+//     db.query(sql, values, (err, result) => {
+//         if (err) {
+//             throw err;
+//         }
+//         res.json({ message: 'Team updated successfully' });
+//     });
+// });
+
 
 app.get('/teams/:teamName', (req, res) => {
     const name = req.params.teamName;
@@ -130,20 +145,32 @@ app.get('/teams/:teamName', (req, res) => {
       res.json(result);
     });
   });
-  app.get('/teams/:teamName/players', (req, res) => {
-    const teamName = req.params.teamName;
-    const searchTerm = req.query.searchTerm;
+  app.post('/teams/:teamName',(req,res)=>{
+    console.log("inside vuvuvu");
+    const name = req.params.teamName;
+    const sql = `INSERT INTO ${name} (pname,age,nationality,Jersey_Num,position,salary,contract) VALUES (?,?,?,?,?,?,?)`
+
+    db.query(sql, [ req.body.name, req.body.age, req.body.nationality, req.body.jersey, req.body.position, req.body.salary, req.body.contract], (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ message: 'successful' });
+      });
+  })
+//   app.get('/teams/:teamName/players', (req, res) => {
+//     const teamName = req.params.teamName;
+//     const searchTerm = req.query.searchTerm;
   
-    const sql = `SELECT * FROM players WHERE Team = ? AND (PName LIKE ? OR Position LIKE ? OR Age LIKE ? OR Nationality LIKE ? OR Jersey_Num LIKE ? OR Salary LIKE ? OR Contract LIKE ?)`;
-    const values = [teamName, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`];
+//     const sql = `SELECT * FROM players WHERE Team = ? AND (PName LIKE ? OR Position LIKE ? OR Age LIKE ? OR Nationality LIKE ? OR Jersey_Num LIKE ? OR Salary LIKE ? OR Contract LIKE ?)`;
+//     const values = [teamName, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`];
   
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result);
-    });
-  });
+//     db.query(sql, values, (err, result) => {
+//       if (err) {
+//         throw err;
+//       }
+//       res.json(result);
+//     });
+//   });
   
 // app.get('/players', (req, res) => {
 //     const sql = 'SELECT * FROM players';
